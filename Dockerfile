@@ -1,4 +1,7 @@
-# specify the node base image with your desired version node:<version>
-FROM node:18.15.0
-# replace this with your application's default port
+FROM node:18.15.0-slim
 EXPOSE 3000
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+CMD [ "npm", "run", "dev" ]
