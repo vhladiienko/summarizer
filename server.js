@@ -1,5 +1,4 @@
-require('dotenv').config();
-
+const dotenv = require('dotenv')
 const express = require('express');
 const multer = require('multer');
 const ejs = require('ejs');
@@ -8,9 +7,10 @@ const fs = require('fs');
 const axios = require('axios');
 const FormData = require('form-data');
 const bodyParser = require('body-parser');
-
 const app = express();
 const upload = multer({ dest: 'uploads/' });
+
+dotenv.config();
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const apiUrlAudio = 'https://api.openai.com/v1/audio/transcriptions';
 const apiUrlChat = 'https://api.openai.com/v1/chat/completions';
-const apiKey = process.env.OPENAI_API_KEY || 'paset_your_openai_api_key';
+const apiKey = process.env.OPENAI_API_KEY;
 
 app.post('/transcribe', upload.single('audio'), async (req, res) => {
   try {
@@ -40,7 +40,6 @@ app.post('/transcribe', upload.single('audio'), async (req, res) => {
     };
 
     const transcriptionResponse = await axios.post(apiUrlAudio, formData, { headers });
-    console.log(transcriptionResponse.data.text);
     
     res.json({ 
       transcript: transcriptionResponse.data.text
@@ -62,7 +61,6 @@ app.post('/summarize', async (req, res) => {
       'Authorization': `Bearer ${apiKey}`
     };
     const completionResponse = await axios.post(apiUrlChat, data, { headers });
-    console.log(completionResponse.data.choices[0]);
 
     res.json({
       recap: completionResponse.data.choices[0].message.content
