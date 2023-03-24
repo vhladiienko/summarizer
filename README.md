@@ -5,4 +5,7 @@
 4. Sends the transcript with a prompt to recap it and list action items
 
 # Run
-Clone and run `npm i` and `npm run dev`
+1. Clone
+2. Rename .env.template to .env
+3. Fill in your API key
+4. Run `npm i` and `npm run dev`
