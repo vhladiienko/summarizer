@@ -1,0 +1,67 @@
+<!-- views/index.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transcribe App</title>
+</head>
+<body>
+  <h1>Transcribe App</h1>
+  <div class="block">
+    <form id="uploadForm" enctype="multipart/form-data">
+      <input type="file" id="audio" name="audio" accept="audio/*" required>
+      <button type="submit">🗯️ Transcribe</button>
+    </form>
+  </div>
+  <div class="block">
+    <h2>Transcript</h2>
+    <textarea id="transcript" rows="10" cols="50"></textarea>
+    <div>
+      <button onclick="summarize()">📃 Summarize</button>
+    </div>
+  </div>
+  <div class="block">
+    <h2>Summary</h2>
+    <p>Used prompt: Recap below meeting transcription with bullet points and outline action points: <i>transcript</i></p>
+    <textarea id="recap" rows="10" cols="50" readonly></textarea>
+  </div>
+  <style>
+    div.block { 
+      font-family: Verdana, Geneva, Tahoma, sans-serif; 
+      margin: 20px 20px;
+     }
+  </style>
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      try {
+        const response = await fetch('/transcribe', { method: 'POST', body: formData });
+        const jsonResponse = await response.json();
+        document.getElementById('transcript').value = jsonResponse.transcript;
+      } catch (error) {
+        console.error('Error while processing the file:', error);
+      }
+    });
+    
+    async function summarize() {
+      const transcript = document.getElementById('transcript').value;
+      try {
+        const response = await fetch('/summarize', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({'transcript': transcript})
+        });
+        const jsonResponse = await response.json();
+        document.getElementById('recap').value = jsonResponse.recap;
+      } catch (error) {
+        console.error('Error while processing the text:', error);
+      }
+    } 
+  </script>
+</body>
+</html>
